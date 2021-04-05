@@ -1,0 +1,10 @@
+---
+
+- name: Disable password for user
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^{{ confmgmt_user }}'
+    line: '{{ confmgmt_user }} ALL=(ALL) NOPASSWD:ALL'
+    
+

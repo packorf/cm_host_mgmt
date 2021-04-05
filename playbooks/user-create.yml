@@ -1,0 +1,8 @@
+---
+
+- hosts: all
+  become: yes
+  roles:
+    - user-create 
+    - copy-ssh-key
+    - user-passwd-disable

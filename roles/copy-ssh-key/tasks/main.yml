@@ -1,0 +1,9 @@
+---
+
+- name: Set authorized key for mgmt user
+  ansible.posix.authorized_key:
+    user: '{{ confmgmt_user }}'
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - id_rsa.pub
