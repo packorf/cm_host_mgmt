@@ -1,0 +1,6 @@
+all:
+  hosts:
+    centos-vm-01
+    centos-vm-02
+    centos-vm-03
+    centos-vm-04
