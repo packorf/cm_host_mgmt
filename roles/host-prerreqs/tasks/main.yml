@@ -1,0 +1,54 @@
+---
+
+- name: 'ansible-prerrequisites: Create devops group'
+  group:
+    name: 'devops'
+    state: present
+
+- name: 'ansible-prerrequisites: Disable password for devops group'
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%devops'
+    line: '%devops ALL=(ALL) NOPASSWD:ALL'
+
+- name: 'ansible-prerrequisites: Create ansible user'
+  user: 
+    name: '{{ ansible.user }}'
+    groups: devops
+
+- name: 'ansible-prerrequisites: Setup ssh key'
+  authorized_key:
+    user: '{{ ansible.user }}'
+    key: "{{ ansible.key }}"
+
+- name: 'ansible-prerrequisites: Enable pubkey authentication on ssh'
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PubkeyAuthentication'
+    line: 'PubkeyAuthentication yes'
+  register: sshd_pubkey
+
+- name: 'ansible-prerrequisites: Enable pubkey authentication on ssh'
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^GSSAPIAuthentication'
+    line: 'GSSAPIAuthentication yes'
+  register: sshd_gssapi
+
+- name: 'ansible-prerrequisites: Remove password authentication on ssh'
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication yes'
+  register: sshd_pass
+  when: False
+
+- name: 'ansible-prerrequisites: Restart SSH Service'
+  service:
+    name: sshd
+    state: restarted
+  when: sshd_pubkey.changed or sshd_pass.changed or sshd_gssapi
