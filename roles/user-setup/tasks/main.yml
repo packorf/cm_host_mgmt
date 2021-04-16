@@ -2,7 +2,7 @@
 
 - name: Check sshuser group exists
   group:
-    name: 'sshuser'
+    name: 'ssh'
     state: present
 
 - name: Set up user accounts
@@ -17,18 +17,17 @@
     key: "{{ authorized_ssh_keys[item]['key'] }}"
   with_items: "{{ authorized_ssh_keys.keys() | list }}"
 
+- name: Determine existing users
+  shell: 'grep ssh /etc/group | cut -d: -f4 | tr "," "\n"'
+  changed_when: false 
+  register: existing_users
+
 - name: Determine removed users
   set_fact:
-    host_removed_users: "{{ host_users | difference(users) }}"
-  when: ansible_facts.host_users is defined
+    removed_users: "{{ existing_users.stdout_lines | difference(users) }}"
 
 - name: Delete removed user accounts
   user:
     name: "{{ item }}"
     state: absent
-  with_items: "{{ host_removed_users }}"
-  when: ansible_facts.host_users is defined
-
-- name: Set final user list
-  set_fact:
-    host_users: "{{ users.keys() | list }}"
+  with_items: "{{ removed_users }}"

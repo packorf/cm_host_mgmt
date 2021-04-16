@@ -1,6 +1,6 @@
 users:
   packorf:
-    groups: ['devops']
+    groups: ['ssh','devops']
 
 authorized_ssh_keys:
   packorf:
