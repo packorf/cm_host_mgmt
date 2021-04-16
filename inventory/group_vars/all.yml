@@ -1,1 +1,8 @@
-confmgmt_user: devops_usr
+users:
+  packorf:
+    groups: ['devops']
+
+authorized_ssh_keys:
+  packorf:
+    key: ''
+
