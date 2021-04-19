@@ -1,0 +1,13 @@
+---
+
+- name: Installs docker
+  yum: 
+    name: docker-ce-{{docker_version}}
+    state: installed
+  
+- name: restart docker
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
